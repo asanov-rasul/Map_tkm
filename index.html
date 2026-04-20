@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Карта достопримечательностей Туркменистана</title>
+
+  <!-- Leaflet CSS -->
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    /* ───────────────────────────────────────────
+       VARIABLES & RESET
+    ─────────────────────────────────────────── */
+    :root {
+      --bg:        #0b1120;
+      --panel:     #111827;
+      --panel2:    #1a2438;
+      --border:    #1e3a5f;
+      --accent:    #3b82f6;
+      --accent2:   #60a5fa;
+      --red:       #e63939;
+      --gold:      #f59e0b;
+      --text:      #e2e8f0;
+      --muted:     #64748b;
+      --selected:  #1d4ed8;
+      --panel-w:   280px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ───────────────────────────────────────────
+       HEADER
+    ─────────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #0d1b2e 0%, #0f2645 50%, #0d1b2e 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* decorative stars */
+    header::before {
+      content: '★ ✦ ★ ✦ ★ ✦ ★ ✦ ★ ✦ ★';
+      position: absolute;
+      top: 4px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px;
+      color: var(--gold);
+      opacity: 0.35;
+      letter-spacing: 6px;
+      white-space: nowrap;
+    }
+
+    .header-text h1 {
+      font-size: 1.2rem;
+      font-weight: normal;
+      letter-spacing: 0.06em;
+      color: #f1f5f9;
+    }
+
+    .header-text p {
+      font-size: 0.75rem;
+      color: var(--gold);
+      letter-spacing: 0.12em;
+      margin-top: 2px;
+      font-style: italic;
+    }
+
+    .header-badge {
+      background: var(--border);
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 0.72rem;
+      color: var(--accent2);
+      letter-spacing: 0.08em;
+    }
+
+    /* ───────────────────────────────────────────
+       MAIN LAYOUT
+    ─────────────────────────────────────────── */
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ───────────────────────────────────────────
+       SIDEBAR
+    ─────────────────────────────────────────── */
+    #sidebar {
+      width: var(--panel-w);
+      min-width: var(--panel-w);
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .sidebar-section {
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    /* list of all sights */
+    #sight-list {
+      list-style: none;
+      overflow-y: auto;
+      flex: 0 0 auto;
+      max-height: 260px;
+    }
+
+    #sight-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 0.15s, border-color 0.15s;
+      font-size: 0.82rem;
+      line-height: 1.3;
+    }
+
+    #sight-list li:hover {
+      background: var(--panel2);
+      border-left-color: var(--accent);
+    }
+
+    #sight-list li.active {
+      background: #162035;
+      border-left-color: var(--accent);
+    }
+
+    .sight-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--selected);
+      color: #fff;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-family: monospace;
+    }
+
+    .sight-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--muted);
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    #sight-list li.active .sight-dot {
+      background: var(--accent);
+    }
+
+    /* selected route list */
+    #route-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #route-list {
+      list-style: none;
+      overflow-y: auto;
+      flex: 1;
+      padding: 0 0 8px;
+    }
+
+    #route-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      border-bottom: 1px solid #161f30;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    #route-list li:hover { background: var(--panel2); }
+
+    .route-idx {
+      font-size: 0.65rem;
+      font-family: monospace;
+      color: var(--accent2);
+      min-width: 18px;
+    }
+
+    .route-name { flex: 1; color: var(--text); }
+
+    .route-remove {
+      color: var(--muted);
+      font-size: 0.75rem;
+      opacity: 0.6;
+    }
+
+    .route-remove:hover { color: var(--red); opacity: 1; }
+
+    #route-empty {
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-style: italic;
+      padding: 10px 14px;
+    }
+
+    /* reset button */
+    .btn-reset {
+      margin: 10px 14px 14px;
+      padding: 9px 14px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      flex-shrink: 0;
+    }
+
+    .btn-reset:hover { opacity: 0.85; transform: scale(1.01); }
+    .btn-reset:active { transform: scale(0.98); }
+
+    /* ───────────────────────────────────────────
+       MAP
+    ─────────────────────────────────────────── */
+    #map {
+      flex: 1;
+      z-index: 1;
+    }
+
+    /* Leaflet popup override */
+    .leaflet-popup-content-wrapper {
+      background: #0f2040;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      max-width: 220px;
+    }
+
+    .leaflet-popup-tip { background: #0f2040; }
+
+    .leaflet-popup-content {
+      font-family: inherit;
+      font-size: 0.8rem;
+      line-height: 1.55;
+    }
+
+    .popup-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--gold);
+      margin-bottom: 5px;
+    }
+
+    .leaflet-popup-close-button { color: var(--muted) !important; }
+
+    /* custom marker styles */
+    .custom-marker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      border: 2px solid rgba(255,255,255,0.5);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    .custom-marker span {
+      transform: rotate(45deg);
+      font-size: 11px;
+      font-weight: bold;
+      color: #fff;
+      font-family: monospace;
+    }
+
+    /* ───────────────────────────────────────────
+       MOBILE
+    ─────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      :root { --panel-w: 100%; }
+
+      .main { flex-direction: column; }
+
+      #sidebar {
+        width: 100%;
+        min-width: 100%;
+        max-height: 42vh;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      #sight-list { max-height: 130px; }
+
+      #map { min-height: 40vh; }
+
+      header { padding: 10px 14px; }
+      .header-text h1 { font-size: 0.95rem; }
+      .header-badge { display: none; }
+    }
+  </style>
+
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════ -->
+
+<header>
+  <div class="header-text">
+    <h1>Карта достопримечательностей Туркменистана</h1>
+    <p>Выбирай места — и смотри маршрут</p>
+  </div>
+  <div class="header-badge">🌐 Leaflet 1.9.4</div>
+</header>
+
+<!-- ══════════════════════════════════════════
+     MAIN
+══════════════════════════════════════════ -->
+
+<div class="main">
+
+  <!-- SIDEBAR -->
+
+  <aside id="sidebar">
+
+```
+<!-- ALL SIGHTS LIST -->
+<div class="sidebar-section">
+  <div class="sidebar-label">Достопримечательности</div>
+</div>
+<ul id="sight-list"></ul>
+
+<!-- SELECTED ROUTE -->
+<div id="route-section">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Выбранный маршрут</div>
+  </div>
+  <ul id="route-list">
+    <li id="route-empty">Ничего не выбрано</li>
+  </ul>
+  <button class="btn-reset" onclick="resetAll()">✕ Сбросить всё</button>
+</div>
+```
+
+  </aside>
+
+  <!-- MAP -->
+
+  <div id="map"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════ -->
+
+<script>
+/* ─────────────────────────────────────────
+   DATA — список достопримечательностей
+───────────────────────────────────────── */
+const SIGHTS = [
+  {
+    id: 0,
+    name: 'Врата ада (Дарваза)',
+    coords: [40.2525, 58.4396],
+    desc: 'Кратер горящего природного газа в пустыне Каракумы, горит с 1971 года.'
+  },
+  {
+    id: 1,
+    name: 'Древний Мерв',
+    coords: [37.6628, 62.1925],
+    desc: 'Древний город на Шёлковом пути, объект ЮНЕСКО.'
+  },
+  {
+    id: 2,
+    name: 'Куня-Ургенч',
+    coords: [42.3277, 59.1544],
+    desc: 'Руины древней столицы Хорезма, объект ЮНЕСКО.'
+  },
+  {
+    id: 3,
+    name: 'Парфянские крепости Ниса',
+    coords: [37.9667, 58.1950],
+    desc: 'Столица Парфянского царства, объект ЮНЕСКО.'
+  },
+  {
+    id: 4,
+    name: 'Каньон Янкыкала',
+    coords: [40.6322, 54.9267],
+    desc: 'Цветные каньоны и скалы, «огненная крепость» Туркменистана.'
+  },
+  {
+    id: 5,
+    name: 'Мечеть Туркменбаши Рухы (Гыпджак)',
+    coords: [38.0178, 58.2528],
+    desc: 'Одна из самых больших мечетей Центральной Азии.'
+  }
+];
+
+/* ─────────────────────────────────────────
+   STATE
+───────────────────────────────────────── */
+// selectedOrder: массив id в порядке выбора
+let selectedOrder = [];
+
+/* ─────────────────────────────────────────
+   MAP INIT
+───────────────────────────────────────── */
+const map = L.map('map', {
+  center: [38.5, 59.0],
+  zoom: 6,
+  zoomControl: true
+});
+
+// Тёмная тайловая тема (CartoDB Dark Matter)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" style="color:#64748b">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/" style="color:#64748b">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 19
+}).addTo(map);
+
+/* ─────────────────────────────────────────
+   MARKER ICON FACTORY
+   inactive — оранжевый / active — синий
+───────────────────────────────────────── */
+function makeIcon(isActive, orderNum) {
+  const color  = isActive ? '#3b82f6' : '#f59e0b';
+  const border = isActive ? '#1d4ed8' : '#b45309';
+  const label  = isActive ? String(orderNum) : '◆';
+  const size   = 34;
+
+  const html = `
+    <div style="
+      width:${size}px; height:${size}px;
+      background:${color};
+      border:2px solid ${border};
+      border-radius:50% 50% 50% 0;
+      transform:rotate(-45deg);
+      display:flex; align-items:center; justify-content:center;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.6);
+    ">
+      <span style="
+        transform:rotate(45deg);
+        font-size:${isActive ? '11px' : '14px'};
+        color:#fff;
+        font-weight:bold;
+        font-family:monospace;
+        line-height:1;
+      ">${label}</span>
+    </div>`;
+
+  return L.divIcon({
+    html,
+    className: '',
+    iconSize:   [size, size],
+    iconAnchor: [size / 2, size],
+    popupAnchor:[0, -size]
+  });
+}
+
+/* ─────────────────────────────────────────
+   POLYLINE (маршрут)
+───────────────────────────────────────── */
+let routeLine = null;
+
+function updatePolyline() {
+  // Удаляем старую линию
+  if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
+
+  if (selectedOrder.length < 2) return; // линия только от 2+ точек
+
+  const coords = selectedOrder.map(id => SIGHTS[id].coords);
+
+  routeLine = L.polyline(coords, {
+    color:     '#e63939',
+    weight:    4,
+    dashArray: '8, 12',
+    opacity:   0.9
+  }).addTo(map);
+}
+
+/* ─────────────────────────────────────────
+   MARKERS — создание
+───────────────────────────────────────── */
+const markers = {}; // id → leaflet marker
+
+SIGHTS.forEach(sight => {
+  const marker = L.marker(sight.coords, { icon: makeIcon(false, 0) })
+    .addTo(map)
+    .bindPopup(
+      `<div class="popup-title">${sight.name}</div><div>${sight.desc}</div>`,
+      { maxWidth: 210 }
+    );
+
+  // Клик по маркеру → выбрать / снять
+  marker.on('click', () => toggleSight(sight.id));
+
+  markers[sight.id] = marker;
+});
+
+/* ─────────────────────────────────────────
+   SIDEBAR LIST — создание
+───────────────────────────────────────── */
+const sightListEl = document.getElementById('sight-list');
+
+SIGHTS.forEach(sight => {
+  const li = document.createElement('li');
+  li.id = `sl-${sight.id}`;
+  li.innerHTML = `
+    <span class="sight-dot" id="dot-${sight.id}"></span>
+    <span>${sight.name}</span>`;
+  li.addEventListener('click', () => toggleSight(sight.id));
+  sightListEl.appendChild(li);
+});
+
+/* ─────────────────────────────────────────
+   ROUTE LIST — обновление
+───────────────────────────────────────── */
+function renderRouteList() {
+  const ul = document.getElementById('route-list');
+  const empty = document.getElementById('route-empty');
+
+  // Удаляем все кроме #route-empty
+  Array.from(ul.children).forEach(c => {
+    if (c.id !== 'route-empty') ul.removeChild(c);
+  });
+
+  if (selectedOrder.length === 0) {
+    empty.style.display = '';
+    return;
+  }
+
+  empty.style.display = 'none';
+
+  selectedOrder.forEach((id, idx) => {
+    const sight = SIGHTS[id];
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span class="route-idx">${idx + 1}.</span>
+      <span class="route-name">${sight.name}</span>
+      <span class="route-remove" title="Убрать">✕</span>`;
+    li.querySelector('.route-remove').addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleSight(id);
+    });
+    ul.appendChild(li);
+  });
+}
+
+/* ─────────────────────────────────────────
+   TOGGLE SIGHT — главная логика
+───────────────────────────────────────── */
+function toggleSight(id) {
+  const idx = selectedOrder.indexOf(id);
+
+  if (idx === -1) {
+    // Добавить
+    selectedOrder.push(id);
+    // Открыть popup и показать маркер
+    markers[id].openPopup();
+    map.panTo(SIGHTS[id].coords, { animate: true, duration: 0.5 });
+  } else {
+    // Убрать
+    selectedOrder.splice(idx, 1);
+    markers[id].closePopup();
+  }
+
+  refreshUI();
+}
+
+/* ─────────────────────────────────────────
+   REFRESH UI — синхронизирует всё
+───────────────────────────────────────── */
+function refreshUI() {
+  // Обновляем маркеры
+  SIGHTS.forEach(sight => {
+    const orderIdx = selectedOrder.indexOf(sight.id);
+    const isActive = orderIdx !== -1;
+    markers[sight.id].setIcon(makeIcon(isActive, orderIdx + 1));
+
+    // sidebar list item
+    const li = document.getElementById(`sl-${sight.id}`);
+    if (isActive) {
+      li.classList.add('active');
+      // заменяем dot на num
+      const dot = li.querySelector('.sight-dot');
+      if (dot) {
+        const num = document.createElement('span');
+        num.className = 'sight-num';
+        num.id = `dot-${sight.id}`;
+        num.textContent = orderIdx + 1;
+        li.replaceChild(num, dot);
+      } else {
+        const num = document.getElementById(`dot-${sight.id}`);
+        if (num) num.textContent = orderIdx + 1;
+      }
+    } else {
+      li.classList.remove('active');
+      // возвращаем dot
+      const num = document.getElementById(`dot-${sight.id}`);
+      if (num && num.classList.contains('sight-num')) {
+        const dot = document.createElement('span');
+        dot.className = 'sight-dot';
+        dot.id = `dot-${sight.id}`;
+        li.replaceChild(dot, num);
+      }
+    }
+  });
+
+  // Полилиния
+  updatePolyline();
+
+  // Список маршрута
+  renderRouteList();
+}
+
+/* ─────────────────────────────────────────
+   RESET ALL
+───────────────────────────────────────── */
+function resetAll() {
+  selectedOrder = [];
+  map.closePopup();
+  refreshUI();
+}
+
+/* ─────────────────────────────────────────
+   INITIAL RENDER
+───────────────────────────────────────── */
+refreshUI();
+</script>
+
+</body>
+</html>
