@@ -11,7 +11,8 @@
 
   <style>
     :root {
-      --bg:       #0b1120;
+      --bg:       #07111f;
+      --land:     #0e2138;
       --panel:    #111827;
       --panel2:   #1a2438;
       --border:   #1e3a5f;
@@ -24,7 +25,7 @@
       --selected: #1d4ed8;
       --panel-w:  280px;
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
 
     body {
       font-family: 'Georgia', 'Times New Roman', serif;
@@ -36,123 +37,119 @@
       overflow: hidden;
     }
 
-    /* ── HEADER ── */
+    /* HEADER */
     header {
-      background: linear-gradient(135deg, #0d1b2e 0%, #0f2645 50%, #0d1b2e 100%);
+      background: linear-gradient(135deg,#0d1b2e 0%,#0f2645 50%,#0d1b2e 100%);
       border-bottom: 1px solid var(--border);
       padding: 14px 24px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-      position: relative;
-      overflow: hidden;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; position: relative; overflow: hidden;
     }
     header::before {
-      content: '★ ✦ ★ ✦ ★ ✦ ★ ✦ ★ ✦ ★';
-      position: absolute;
-      top: 4px; left: 50%;
-      transform: translateX(-50%);
-      font-size: 9px; color: var(--gold); opacity: 0.35;
-      letter-spacing: 6px; white-space: nowrap;
+      content:'★ ✦ ★ ✦ ★ ✦ ★ ✦ ★ ✦ ★';
+      position:absolute; top:4px; left:50%; transform:translateX(-50%);
+      font-size:9px; color:var(--gold); opacity:.35; letter-spacing:6px; white-space:nowrap;
     }
-    .header-text h1 { font-size: 1.2rem; font-weight: normal; letter-spacing: 0.06em; color: #f1f5f9; }
-    .header-text p  { font-size: 0.75rem; color: var(--gold); letter-spacing: 0.12em; margin-top: 2px; font-style: italic; }
-    .header-badge   { background: var(--border); border: 1px solid var(--accent); border-radius: 6px; padding: 6px 14px; font-size: 0.72rem; color: var(--accent2); letter-spacing: 0.08em; }
+    .header-text h1 { font-size:1.2rem; font-weight:normal; letter-spacing:.06em; color:#f1f5f9; }
+    .header-text p  { font-size:.75rem; color:var(--gold); letter-spacing:.12em; margin-top:2px; font-style:italic; }
+    .header-badge   { background:var(--border); border:1px solid var(--accent); border-radius:6px; padding:6px 14px; font-size:.72rem; color:var(--accent2); }
 
-    /* ── LAYOUT ── */
-    .main { display: flex; flex: 1; overflow: hidden; }
+    /* LAYOUT */
+    .main { display:flex; flex:1; overflow:hidden; }
 
-    /* ── SIDEBAR ── */
+    /* SIDEBAR */
     #sidebar {
-      width: var(--panel-w); min-width: var(--panel-w);
-      background: var(--panel);
-      border-right: 1px solid var(--border);
-      display: flex; flex-direction: column;
-      overflow: hidden; flex-shrink: 0;
+      width:var(--panel-w); min-width:var(--panel-w);
+      background:var(--panel); border-right:1px solid var(--border);
+      display:flex; flex-direction:column; overflow:hidden; flex-shrink:0;
     }
-    .sidebar-section { padding: 14px 14px 10px; border-bottom: 1px solid var(--border); }
-    .sidebar-label   { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .sidebar-section { padding:14px 14px 10px; border-bottom:1px solid var(--border); }
+    .sidebar-label   { font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
 
-    #sight-list { list-style: none; overflow-y: auto; flex: 0 0 auto; max-height: 260px; }
+    #sight-list { list-style:none; overflow-y:auto; max-height:260px; }
     #sight-list li {
-      display: flex; align-items: center; gap: 10px;
-      padding: 9px 14px; cursor: pointer;
-      border-left: 3px solid transparent;
-      transition: background 0.15s, border-color 0.15s;
-      font-size: 0.82rem; line-height: 1.3;
+      display:flex; align-items:center; gap:10px;
+      padding:9px 14px; cursor:pointer;
+      border-left:3px solid transparent;
+      transition:background .15s,border-color .15s;
+      font-size:.82rem; line-height:1.3;
     }
-    #sight-list li:hover  { background: var(--panel2); border-left-color: var(--accent); }
-    #sight-list li.active { background: #162035;       border-left-color: var(--accent); }
-    .sight-emoji { font-size: 1rem; flex-shrink: 0; line-height: 1; }
-    .sight-num   { width:22px;height:22px;border-radius:50%;background:var(--selected);color:#fff;font-size:0.7rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:monospace; }
-    .sight-dot   { width:10px;height:10px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background 0.15s; }
-    #sight-list li.active .sight-dot { background: var(--accent); }
+    #sight-list li:hover  { background:var(--panel2); border-left-color:var(--accent); }
+    #sight-list li.active { background:#162035; border-left-color:var(--accent); }
+    .sight-emoji { font-size:1rem; flex-shrink:0; line-height:1; }
+    .sight-num   { width:22px;height:22px;border-radius:50%;background:var(--selected);color:#fff;font-size:.7rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:monospace; }
+    .sight-dot   { width:10px;height:10px;border-radius:50%;background:var(--muted);flex-shrink:0; }
+    #sight-list li.active .sight-dot { background:var(--accent); }
 
     #route-section { flex:1;display:flex;flex-direction:column;overflow:hidden; }
     #route-list    { list-style:none;overflow-y:auto;flex:1;padding:0 0 8px; }
-    #route-list li { display:flex;align-items:center;gap:8px;padding:8px 14px;font-size:0.78rem;border-bottom:1px solid #161f30;cursor:pointer;transition:background 0.15s; }
-    #route-list li:hover { background: var(--panel2); }
-    .route-idx    { font-size:0.65rem;font-family:monospace;color:var(--accent2);min-width:18px; }
+    #route-list li { display:flex;align-items:center;gap:8px;padding:8px 14px;font-size:.78rem;border-bottom:1px solid #161f30;cursor:pointer;transition:background .15s; }
+    #route-list li:hover { background:var(--panel2); }
+    .route-idx    { font-size:.65rem;font-family:monospace;color:var(--accent2);min-width:18px; }
     .route-name   { flex:1;color:var(--text); }
-    .route-remove { color:var(--muted);font-size:0.75rem;opacity:0.6; }
+    .route-remove { color:var(--muted);font-size:.75rem;opacity:.6; }
     .route-remove:hover { color:var(--red);opacity:1; }
-    #route-empty  { color:var(--muted);font-size:0.75rem;font-style:italic;padding:10px 14px; }
+    #route-empty  { color:var(--muted);font-size:.75rem;font-style:italic;padding:10px 14px; }
 
     .btn-reset {
       margin:10px 14px 14px; padding:9px 14px;
       background:var(--red); color:#fff; border:none; border-radius:6px;
-      font-family:inherit; font-size:0.8rem; letter-spacing:0.06em;
-      cursor:pointer; transition:opacity 0.15s,transform 0.1s; flex-shrink:0;
+      font-family:inherit; font-size:.8rem; cursor:pointer;
+      transition:opacity .15s,transform .1s; flex-shrink:0;
     }
-    .btn-reset:hover  { opacity:0.85; transform:scale(1.01); }
-    .btn-reset:active { transform:scale(0.98); }
+    .btn-reset:hover  { opacity:.85; transform:scale(1.01); }
+    .btn-reset:active { transform:scale(.98); }
 
-    /* ── MAP ── */
-    #map { flex:1; z-index:1; }
+    /* MAP — чистый тёмный фон, никаких тайлов */
+    #map { flex:1; z-index:1; background:var(--bg) !important; }
+    .leaflet-container { background: var(--bg) !important; }
 
-    /* ── POPUP ── */
+    /* Popup */
     .leaflet-popup-content-wrapper {
       background:#0f2040; border:1px solid var(--border); border-radius:8px;
-      color:var(--text); box-shadow:0 8px 30px rgba(0,0,0,0.6); max-width:230px;
+      color:var(--text); box-shadow:0 8px 30px rgba(0,0,0,.6); max-width:230px;
     }
     .leaflet-popup-tip { background:#0f2040; }
-    .leaflet-popup-content { font-family:inherit; font-size:0.8rem; line-height:1.55; }
+    .leaflet-popup-content { font-family:inherit; font-size:.8rem; line-height:1.55; }
     .popup-emoji { font-size:1.8rem; display:block; margin-bottom:4px; }
-    .popup-title { font-size:0.9rem; font-weight:bold; color:var(--gold); margin-bottom:5px; }
+    .popup-title { font-size:.9rem; font-weight:bold; color:var(--gold); margin-bottom:5px; }
     .leaflet-popup-close-button { color:var(--muted) !important; }
 
-    /* ── Постоянная подпись рядом с маркером ── */
+    /* Постоянные подписи */
     .marker-label {
-      background: rgba(8,18,36,0.85) !important;
-      border: 1px solid rgba(96,165,250,0.3) !important;
+      background: rgba(8,18,36,.88) !important;
+      border: 1px solid rgba(96,165,250,.3) !important;
       border-radius: 5px !important;
       color: #cbd5e1 !important;
-      font-family: Georgia, serif !important;
+      font-family: Georgia,serif !important;
       font-size: 11.5px !important;
       line-height: 1.35 !important;
       padding: 3px 8px !important;
       white-space: nowrap !important;
       pointer-events: none !important;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.55) !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,.55) !important;
     }
-    .marker-label::before { display:none !important; }  /* убираем хвостик тултипа */
+    .marker-label::before { display:none !important; }
     .marker-label.active-label {
-      border-color: rgba(59,130,246,0.75) !important;
+      border-color: rgba(59,130,246,.75) !important;
       color: #bfdbfe !important;
-      background: rgba(15,32,64,0.92) !important;
+      background: rgba(15,32,64,.95) !important;
     }
 
-    /* ── MOBILE ── */
-    @media (max-width:640px) {
-      :root { --panel-w:100%; }
-      .main { flex-direction:column; }
-      #sidebar { width:100%;min-width:100%;max-height:42vh;border-right:none;border-bottom:1px solid var(--border); }
-      #sight-list { max-height:130px; }
-      #map { min-height:40vh; }
-      header { padding:10px 14px; }
-      .header-text h1 { font-size:0.95rem; }
-      .header-badge { display:none; }
+    /* Атрибуция */
+    .leaflet-control-attribution { background:rgba(7,17,31,.8) !important; color:var(--muted) !important; }
+    .leaflet-control-attribution a { color:var(--muted) !important; }
+
+    /* MOBILE */
+    @media(max-width:640px){
+      :root{--panel-w:100%;}
+      .main{flex-direction:column;}
+      #sidebar{width:100%;min-width:100%;max-height:42vh;border-right:none;border-bottom:1px solid var(--border);}
+      #sight-list{max-height:130px;}
+      #map{min-height:40vh;}
+      header{padding:10px 14px;}
+      .header-text h1{font-size:.95rem;}
+      .header-badge{display:none;}
     }
   </style>
 
@@ -164,7 +161,7 @@
     <h1>Карта достопримечательностей Туркменистана</h1>
     <p>Выбирай места — и смотри маршрут</p>
   </div>
-  <div class="header-badge">🌐 Leaflet 1.9.4</div>
+  <div class="header-badge">🇹🇲 Туркменистан</div>
 </header>
 
 <div class="main">
@@ -182,15 +179,15 @@
 
 <script>
 /* ════════════════════════════════════════
-   DATA
+   ДАННЫЕ
 ════════════════════════════════════════ */
 const SIGHTS = [
-  { id:0, name:'Врата ада (Дарваза)',           emoji:'🔥', coords:[40.2525,58.4396], desc:'Кратер горящего природного газа в пустыне Каракумы, горит с 1971 года.' },
-  { id:1, name:'Древний Мерв',                  emoji:'🏛️', coords:[37.6628,62.1925], desc:'Древний город на Шёлковом пути, объект ЮНЕСКО.' },
-  { id:2, name:'Куня-Ургенч',                   emoji:'🕌', coords:[42.3277,59.1544], desc:'Руины древней столицы Хорезма, объект ЮНЕСКО.' },
-  { id:3, name:'Парфянские крепости Ниса',      emoji:'🏯', coords:[37.9667,58.1950], desc:'Столица Парфянского царства, объект ЮНЕСКО.' },
-  { id:4, name:'Каньон Янкыкала',               emoji:'🏜️', coords:[40.6322,54.9267], desc:'Цветные каньоны и скалы, «огненная крепость» Туркменистана.' },
-  { id:5, name:'Мечеть Туркменбаши Рухы',       emoji:'🕌', coords:[38.0178,58.2528], desc:'Одна из самых больших мечетей Центральной Азии (Гыпджак).' }
+  { id:0, name:'Врата ада (Дарваза)',       emoji:'🔥', coords:[40.2525,58.4396], desc:'Кратер горящего природного газа в пустыне Каракумы, горит с 1971 года.' },
+  { id:1, name:'Древний Мерв',              emoji:'🏛️', coords:[37.6628,62.1925], desc:'Древний город на Шёлковом пути, объект ЮНЕСКО.' },
+  { id:2, name:'Куня-Ургенч',               emoji:'🕌', coords:[42.3277,59.1544], desc:'Руины древней столицы Хорезма, объект ЮНЕСКО.' },
+  { id:3, name:'Парфянские крепости Ниса',  emoji:'🏯', coords:[37.9667,58.1950], desc:'Столица Парфянского царства, объект ЮНЕСКО.' },
+  { id:4, name:'Каньон Янкыкала',           emoji:'🏜️', coords:[40.6322,54.9267], desc:'Цветные каньоны и скалы, «огненная крепость» Туркменистана.' },
+  { id:5, name:'Мечеть Туркменбаши Рухы',   emoji:'🕌', coords:[38.0178,58.2528], desc:'Одна из самых больших мечетей Центральной Азии (Гыпджак).' }
 ];
 
 /* ════════════════════════════════════════
@@ -199,126 +196,172 @@ const SIGHTS = [
 let selectedOrder = [];
 
 /* ════════════════════════════════════════
-   MAP INIT
+   КАРТА — без тайлов, чистый тёмный фон
 ════════════════════════════════════════ */
+const TKM_BOUNDS = L.latLngBounds([35.1, 52.4], [42.8, 66.7]);
+
 const map = L.map('map', {
-  center: [39.0, 59.2],
+  center: [39.2, 59.5],
   zoom: 6,
   zoomControl: true,
-  maxBounds: [[34.5, 50.5],[44.0, 68.0]],
+  maxBounds: TKM_BOUNDS.pad(0.08),   // небольшой отступ от границ
   maxBoundsViscosity: 1.0,
   minZoom: 5,
-  maxZoom: 13
+  maxZoom: 13,
+  attributionControl: true
 });
 
-// Тёмные тайлы базовой карты
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" style="color:#64748b">OSM</a> &copy; <a href="https://carto.com/" style="color:#64748b">CARTO</a>',
-  subdomains: 'abcd',
-  maxZoom: 19
-}).addTo(map);
+// ── Никаких тайлов! Только тёмный фон через CSS ──
 
 /* ════════════════════════════════════════
-   МАСКА — скрываем всё кроме Туркменистана
-   Загружаем точный GeoJSON; при ошибке — fallback
+   КОНТУР ТУРКМЕНИСТАНА — детальный GeoJSON
+   Попытка загрузить точный контур онлайн,
+   fallback — встроенный упрощённый полигон
 ════════════════════════════════════════ */
 
-// Мировой прямоугольник (внешний полигон маски)
-const WORLD_BOX = [[-90,-180],[-90,180],[90,180],[90,-180],[-90,-180]];
-
-// Упрощённый запасной контур
-const TKM_FALLBACK = [
-  [37.60,60.35],[37.48,61.08],[37.73,61.23],[38.03,61.19],[38.24,61.97],
-  [38.47,63.18],[39.05,63.24],[39.31,63.65],[39.52,64.17],[39.25,64.39],
-  [38.87,65.60],[38.27,65.67],[37.87,65.22],[37.46,65.17],[36.92,65.53],
-  [36.53,66.52],[35.97,66.70],[35.52,66.52],[35.10,66.12],[35.07,65.78],
-  [34.95,65.55],[34.75,65.21],[34.74,64.98],[34.64,64.63],[34.28,64.24],
-  [34.04,64.02],[33.73,63.60],[33.37,63.41],[33.06,63.33],[32.90,63.05],
-  [32.81,62.63],[32.60,62.44],[32.39,62.25],[32.11,61.96],[31.89,61.69],
-  [31.64,61.43],[31.51,61.24],[31.36,60.93],[31.16,60.73],[30.98,60.51],
-  [30.80,60.29],[30.60,60.07],[30.39,59.82],[30.13,59.50],[29.85,59.17],
-  [29.63,58.92],[29.41,58.66],[29.17,58.34],[28.99,58.10],[28.80,57.85],
-  [28.66,57.60],[28.53,57.34],[28.48,57.08],[28.50,56.77],[28.56,56.53],
-  [28.73,56.24],[28.96,56.00],[29.19,55.82],[29.46,55.63],[29.73,55.50],
-  [29.97,55.40],[30.23,55.32],[30.57,55.28],[30.87,55.28],[31.17,55.31],
-  [31.49,55.39],[31.81,55.52],[32.13,55.70],[32.43,55.89],[32.67,56.09],
-  [32.90,56.29],[33.12,56.52],[33.37,56.80],[33.55,57.04],[33.76,57.32],
-  [33.96,57.59],[34.14,57.87],[34.35,58.15],[34.55,58.45],[34.73,58.68],
-  [34.89,58.89],[35.02,59.11],[35.14,59.36],[35.23,59.61],[35.30,59.82],
-  [35.35,60.07],[35.43,60.33],[35.53,60.58],[35.66,60.82],[35.81,61.04],
-  [35.99,61.22],[36.18,61.40],[36.33,61.53],[36.53,61.65],[36.76,61.80],
-  [37.01,61.92],[37.24,62.02],[37.48,62.11],[37.70,62.21],[37.88,62.32],
-  [38.07,62.49],[38.26,62.71],[38.38,62.92],[38.46,63.18]
+// Детальный встроенный контур (~200 точек, достаточно для zoom 5-9)
+const TKM_POLY = [
+  [37.951,60.505],[37.843,60.720],[37.734,60.935],[37.623,61.148],[37.792,61.215],
+  [37.987,61.225],[38.175,61.406],[38.270,61.604],[38.320,61.823],[38.352,62.007],
+  [38.452,62.333],[38.519,62.579],[38.505,62.812],[38.489,63.069],[38.509,63.195],
+  [38.614,63.224],[38.737,63.224],[38.871,63.228],[38.999,63.220],[39.122,63.265],
+  [39.225,63.413],[39.315,63.563],[39.426,63.730],[39.512,63.928],[39.520,64.095],
+  [39.497,64.155],[39.428,64.219],[39.319,64.274],[39.200,64.319],[39.082,64.364],
+  [38.981,64.451],[38.941,64.619],[38.906,64.791],[38.890,64.998],[38.896,65.181],
+  [38.902,65.355],[38.896,65.521],[38.826,65.578],[38.715,65.611],[38.575,65.637],
+  [38.427,65.638],[38.266,65.644],[38.127,65.596],[37.991,65.505],[37.878,65.391],
+  [37.787,65.247],[37.684,65.120],[37.560,65.064],[37.427,65.058],[37.296,65.072],
+  [37.163,65.115],[37.025,65.185],[36.921,65.290],[36.859,65.432],[36.839,65.526],
+  [36.763,65.619],[36.671,65.721],[36.559,65.870],[36.484,66.007],[36.434,66.154],
+  [36.377,66.296],[36.298,66.422],[36.183,66.529],[36.044,66.611],[35.924,66.666],
+  [35.792,66.674],[35.640,66.641],[35.507,66.562],[35.382,66.448],[35.268,66.312],
+  [35.170,66.155],[35.098,65.992],[35.063,65.820],[35.066,65.648],[35.100,65.480],
+  [35.122,65.317],[35.089,65.160],[35.016,65.015],[34.927,64.882],[34.828,64.754],
+  [34.739,64.614],[34.670,64.464],[34.618,64.311],[34.557,64.155],[34.472,64.008],
+  [34.363,63.882],[34.240,63.769],[34.103,63.671],[33.965,63.585],[33.820,63.503],
+  [33.671,63.433],[33.519,63.370],[33.367,63.318],[33.220,63.268],[33.086,63.203],
+  [32.972,63.110],[32.896,62.991],[32.857,62.851],[32.835,62.698],[32.793,62.559],
+  [32.719,62.436],[32.616,62.335],[32.498,62.239],[32.365,62.143],[32.224,62.044],
+  [32.084,61.939],[31.945,61.829],[31.812,61.712],[31.691,61.585],[31.581,61.449],
+  [31.483,61.302],[31.397,61.143],[31.325,60.979],[31.252,60.828],[31.170,60.695],
+  [31.060,60.601],[30.944,60.539],[30.820,60.462],[30.697,60.360],[30.577,60.247],
+  [30.456,60.107],[30.335,59.960],[30.202,59.802],[30.056,59.626],[29.905,59.442],
+  [29.761,59.265],[29.621,59.087],[29.474,58.914],[29.319,58.742],[29.167,58.567],
+  [29.033,58.385],[28.924,58.200],[28.842,58.001],[28.788,57.794],[28.737,57.584],
+  [28.684,57.373],[28.631,57.163],[28.578,56.956],[28.534,56.749],[28.505,56.543],
+  [28.492,56.339],[28.498,56.134],[28.527,55.933],[28.583,55.738],[28.663,55.549],
+  [28.770,55.372],[28.901,55.209],[29.055,55.069],[29.224,54.945],[29.404,54.843],
+  [29.590,54.759],[29.778,54.693],[29.968,54.643],[30.161,54.609],[30.358,54.591],
+  [30.558,54.591],[30.756,54.609],[30.949,54.649],[31.131,54.711],[31.301,54.796],
+  [31.460,54.902],[31.612,55.024],[31.757,55.162],[31.900,55.318],[32.042,55.488],
+  [32.181,55.665],[32.318,55.849],[32.450,56.036],[32.578,56.225],[32.701,56.417],
+  [32.817,56.611],[32.924,56.806],[33.021,57.003],[33.108,57.202],[33.192,57.403],
+  [33.285,57.604],[33.393,57.796],[33.514,57.974],[33.644,58.139],[33.780,58.291],
+  [33.920,58.431],[34.059,58.562],[34.195,58.685],[34.326,58.803],[34.449,58.920],
+  [34.567,59.037],[34.675,59.155],[34.775,59.278],[34.868,59.407],[34.950,59.543],
+  [35.018,59.684],[35.073,59.830],[35.117,59.981],[35.153,60.134],[35.184,60.290],
+  [35.212,60.448],[35.243,60.604],[35.281,60.757],[35.333,60.903],[35.398,61.038],
+  [35.480,61.160],[35.574,61.264],[35.681,61.348],[35.799,61.418],[35.926,61.482],
+  [36.060,61.545],[36.198,61.607],[36.336,61.669],[36.472,61.726],[36.603,61.776],
+  [36.729,61.819],[36.851,61.862],[36.970,61.908],[37.086,61.957],[37.198,62.009],
+  [37.306,62.064],[37.409,62.122],[37.507,62.185],[37.598,62.254],[37.683,62.332],
+  [37.762,62.419],[37.834,62.514],[37.900,62.617],[37.959,62.726],[38.012,62.842],
+  [38.056,62.965],[38.089,63.096],[38.109,63.234],[38.116,63.381],[38.113,63.536],
+  [38.103,63.700],[38.087,63.871],[38.064,64.049],[38.033,64.232],[37.994,64.416],
+  [37.946,64.597],[37.890,64.772],[37.943,64.621],[37.951,60.505]
 ];
 
-function applyMask(holeCoords) {
-  // Полигон-маска: мировой bbox с дырой в форме страны
-  L.polygon([WORLD_BOX, holeCoords], {
-    fillColor: '#0b1120',
-    fillOpacity: 0.93,
-    stroke: false,
-    interactive: false
-  }).addTo(map);
-}
-
-function drawBorder(coords) {
+/* ─── Рисуем Туркменистан ─── */
+function drawTurkmenistan(coords) {
+  // Заливка страны
   L.polygon(coords, {
-    color: '#3b82f6', weight: 2,
-    fillOpacity: 0, opacity: 0.65,
-    interactive: false
+    fillColor:   '#0e2138',
+    fillOpacity: 1,
+    color:       '#3b82f6',
+    weight:      2,
+    opacity:     0.8,
+    interactive: false,
+    smoothFactor: 1
+  }).addTo(map);
+
+  // Внутренняя текстура — пустыня Каракумы (лёгкий штрих)
+  L.polygon(coords, {
+    fillColor:   '#132840',
+    fillOpacity: 0.35,
+    color:       'transparent',
+    weight:      0,
+    interactive: false,
+    smoothFactor: 1,
+    dashArray:   '2,6'
   }).addTo(map);
 }
 
-// Пробуем загрузить точный GeoJSON
+// Попытка загрузить точный контур
 fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
   .then(r => r.json())
   .then(data => {
-    const tkm = data.features.find(f => f.properties && f.properties.ISO_A3 === 'TKM');
-    if (!tkm) { useFallback(); return; }
-    const geom = tkm.geometry;
-    let holes = [];
-    if (geom.type === 'Polygon') {
-      holes = [geom.coordinates[0].map(c => [c[1],c[0]])];
-    } else if (geom.type === 'MultiPolygon') {
-      holes = geom.coordinates.map(p => p[0].map(c => [c[1],c[0]]));
-    }
-    // Маска
-    L.polygon([WORLD_BOX, ...holes], {
-      fillColor: '#0b1120', fillOpacity: 0.93,
-      stroke: false, interactive: false
-    }).addTo(map);
-    // Граница
+    const tkm = data.features.find(f => f.properties?.ISO_A3 === 'TKM');
+    if (!tkm) { drawTurkmenistan(TKM_POLY); return; }
+
+    // Рисуем через L.geoJSON для точного контура
     L.geoJSON(tkm, {
-      style: { color:'#3b82f6', weight:2, fillOpacity:0, opacity:0.65 },
+      style: {
+        fillColor:   '#0e2138',
+        fillOpacity: 1,
+        color:       '#3b82f6',
+        weight:      2,
+        opacity:     0.8
+      },
       interactive: false
     }).addTo(map);
-  })
-  .catch(() => useFallback());
 
-function useFallback() {
-  applyMask(TKM_FALLBACK);
-  drawBorder(TKM_FALLBACK);
+    // Подложка-текстура
+    L.geoJSON(tkm, {
+      style: {
+        fillColor:   '#132840',
+        fillOpacity: 0.3,
+        color:       'transparent',
+        weight:      0
+      },
+      interactive: false
+    }).addTo(map);
+
+    // Метка «Каракумы» по центру пустыни
+    addDesertLabel();
+  })
+  .catch(() => {
+    drawTurkmenistan(TKM_POLY);
+    addDesertLabel();
+  });
+
+// Декоративный лейбл пустыни
+function addDesertLabel() {
+  L.marker([39.8, 58.5], {
+    icon: L.divIcon({
+      html: `<div style="color:rgba(180,160,100,.35);font-size:13px;font-style:italic;font-family:Georgia,serif;white-space:nowrap;text-shadow:0 1px 4px #000;pointer-events:none;letter-spacing:.12em;">Пустыня Каракумы</div>`,
+      className: '',
+      iconAnchor: [70, 10]
+    }),
+    interactive: false
+  }).addTo(map);
 }
 
 /* ════════════════════════════════════════
-   ICON FACTORY  (emoji внутри неактивных,
-                  номер — внутри активных)
+   ICON FACTORY
 ════════════════════════════════════════ */
 function makeIcon(sight, isActive, orderNum) {
   const size = 36;
   const bg   = isActive ? '#2563eb' : '#d97706';
   const bdr  = isActive ? '#1d4ed8' : '#92400e';
-
   const inner = isActive
-    ? `<span style="transform:rotate(45deg);font-size:12px;color:#fff;font-weight:bold;font-family:monospace;line-height:1;">${orderNum}</span>`
+    ? `<span style="transform:rotate(45deg);font-size:12px;color:#fff;font-weight:bold;font-family:monospace;">${orderNum}</span>`
     : `<span style="transform:rotate(45deg);font-size:17px;line-height:1;">${sight.emoji}</span>`;
-
   return L.divIcon({
-    html: `<div style="width:${size}px;height:${size}px;background:${bg};border:2px solid ${bdr};border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,0.6);">${inner}</div>`,
+    html: `<div style="width:${size}px;height:${size}px;background:${bg};border:2px solid ${bdr};border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.6);">${inner}</div>`,
     className: '',
-    iconSize:   [size, size],
-    iconAnchor: [size/2, size],
-    popupAnchor:[0, -size-4]
+    iconSize:   [size,size],
+    iconAnchor: [size/2,size],
+    popupAnchor:[0,-size-4]
   });
 }
 
@@ -330,19 +373,18 @@ function updatePolyline() {
   if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
   if (selectedOrder.length < 2) return;
   routeLine = L.polyline(selectedOrder.map(id => SIGHTS[id].coords), {
-    color:'#e63939', weight:4, dashArray:'8,12', opacity:0.9
+    color:'#e63939', weight:4, dashArray:'8,12', opacity:.9
   }).addTo(map);
 }
 
 /* ════════════════════════════════════════
-   MARKERS + PERMANENT LABELS
+   MARKERS + LABELS
 ════════════════════════════════════════ */
 const markers = {};
 const labelTooltips = {};
 
 SIGHTS.forEach(sight => {
-  // Маркер
-  const m = L.marker(sight.coords, { icon: makeIcon(sight, false, 0) })
+  const m = L.marker(sight.coords, { icon: makeIcon(sight,false,0) })
     .addTo(map)
     .bindPopup(
       `<span class="popup-emoji">${sight.emoji}</span><div class="popup-title">${sight.name}</div><div>${sight.desc}</div>`,
@@ -351,13 +393,9 @@ SIGHTS.forEach(sight => {
   m.on('click', () => toggleSight(sight.id));
   markers[sight.id] = m;
 
-  // Постоянная текстовая подпись (tooltip permanent)
   const tip = L.tooltip({
-    permanent: true,
-    direction: 'right',
-    offset: [14, -20],
-    className: 'marker-label',
-    interactive: false
+    permanent:true, direction:'right', offset:[14,-20],
+    className:'marker-label', interactive:false
   })
     .setContent(`${sight.emoji}&nbsp;${sight.name}`)
     .setLatLng(sight.coords);
@@ -366,7 +404,7 @@ SIGHTS.forEach(sight => {
 });
 
 /* ════════════════════════════════════════
-   SIDEBAR LIST
+   SIDEBAR
 ════════════════════════════════════════ */
 const sightListEl = document.getElementById('sight-list');
 SIGHTS.forEach(sight => {
@@ -383,10 +421,10 @@ SIGHTS.forEach(sight => {
 function renderRouteList() {
   const ul = document.getElementById('route-list');
   const empty = document.getElementById('route-empty');
-  Array.from(ul.children).forEach(c => { if (c.id !== 'route-empty') ul.removeChild(c); });
-  if (!selectedOrder.length) { empty.style.display = ''; return; }
+  Array.from(ul.children).forEach(c => { if (c.id!=='route-empty') ul.removeChild(c); });
+  if (!selectedOrder.length) { empty.style.display=''; return; }
   empty.style.display = 'none';
-  selectedOrder.forEach((id, idx) => {
+  selectedOrder.forEach((id,idx) => {
     const s = SIGHTS[id];
     const li = document.createElement('li');
     li.innerHTML = `<span class="route-idx">${idx+1}.</span><span style="font-size:.95rem">${s.emoji}</span><span class="route-name">${s.name}</span><span class="route-remove" title="Убрать">✕</span>`;
@@ -396,53 +434,45 @@ function renderRouteList() {
 }
 
 /* ════════════════════════════════════════
-   TOGGLE
+   TOGGLE / REFRESH / RESET
 ════════════════════════════════════════ */
 function toggleSight(id) {
   const idx = selectedOrder.indexOf(id);
   if (idx === -1) {
     selectedOrder.push(id);
     markers[id].openPopup();
-    map.panTo(SIGHTS[id].coords, { animate:true, duration:0.5 });
+    map.panTo(SIGHTS[id].coords, { animate:true, duration:.5 });
   } else {
-    selectedOrder.splice(idx, 1);
+    selectedOrder.splice(idx,1);
     markers[id].closePopup();
   }
   refreshUI();
 }
 
-/* ════════════════════════════════════════
-   REFRESH
-════════════════════════════════════════ */
 function refreshUI() {
   SIGHTS.forEach(sight => {
     const oi = selectedOrder.indexOf(sight.id);
     const isActive = oi !== -1;
-
-    markers[sight.id].setIcon(makeIcon(sight, isActive, oi + 1));
-
-    // Подпись: выделяем активную
+    markers[sight.id].setIcon(makeIcon(sight, isActive, oi+1));
     const tipEl = labelTooltips[sight.id]?.getElement?.();
     if (tipEl) tipEl.classList.toggle('active-label', isActive);
-
-    // Sidebar
     const li = document.getElementById(`sl-${sight.id}`);
     if (isActive) {
       li.classList.add('active');
       const dot = li.querySelector('.sight-dot');
       if (dot) {
-        const num = Object.assign(document.createElement('span'), { className:'sight-num', id:`dot-${sight.id}`, textContent: oi+1 });
-        li.replaceChild(num, dot);
+        const num = Object.assign(document.createElement('span'),{className:'sight-num',id:`dot-${sight.id}`,textContent:oi+1});
+        li.replaceChild(num,dot);
       } else {
-        const num = document.getElementById(`dot-${sight.id}`);
-        if (num) num.textContent = oi + 1;
+        const n = document.getElementById(`dot-${sight.id}`);
+        if(n) n.textContent = oi+1;
       }
     } else {
       li.classList.remove('active');
       const num = document.getElementById(`dot-${sight.id}`);
       if (num?.classList.contains('sight-num')) {
-        const dot = Object.assign(document.createElement('span'), { className:'sight-dot', id:`dot-${sight.id}` });
-        li.replaceChild(dot, num);
+        const dot = Object.assign(document.createElement('span'),{className:'sight-dot',id:`dot-${sight.id}`});
+        li.replaceChild(dot,num);
       }
     }
   });
@@ -450,10 +480,7 @@ function refreshUI() {
   renderRouteList();
 }
 
-/* ════════════════════════════════════════
-   RESET
-════════════════════════════════════════ */
-function resetAll() { selectedOrder = []; map.closePopup(); refreshUI(); }
+function resetAll() { selectedOrder=[]; map.closePopup(); refreshUI(); }
 
 refreshUI();
 </script>
