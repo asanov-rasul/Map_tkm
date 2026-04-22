@@ -191,18 +191,18 @@ let selectedOrder = [];
 // ── Карта с тайлами OpenStreetMap ──
 // Границы Туркменистана с небольшим отступом
 const TKM_BOUNDS = L.latLngBounds(
-  [35.0, 52.3],   // юго-запад
-  [42.8, 66.8]    // северо-восток
+  [33.0, 49.5],   // юго-запад с запасом
+  [44.5, 69.5]    // северо-восток с запасом
 );
 
 const map = L.map('map', {
   center: [39.2, 59.5],
   zoom: 6,
-  minZoom: 6,
+  minZoom: 5,
   maxZoom: 13,
   zoomControl: true,
   maxBounds: TKM_BOUNDS,
-  maxBoundsViscosity: 1.0   // полностью блокирует выход за границы
+  maxBoundsViscosity: 0.8
 });
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
