@@ -12,7 +12,6 @@
   <style>
     :root {
       --bg:       #07111f;
-      --land:     #0e2138;
       --panel:    #111827;
       --panel2:   #1a2438;
       --border:   #1e3a5f;
@@ -97,8 +96,12 @@
     .btn-reset:hover  { opacity:.85; transform:scale(1.01); }
     .btn-reset:active { transform:scale(.98); }
 
-    #map { flex:1; z-index:1; background:var(--bg) !important; }
-    .leaflet-container { background: var(--bg) !important; }
+    #map { flex:1; z-index:1; }
+
+    /* Тёмный фильтр поверх OSM тайлов — сохраняет контуры, но делает тёмным */
+    .leaflet-tile-pane {
+      filter: brightness(0.3) saturate(0.5) hue-rotate(190deg) contrast(1.1);
+    }
 
     .leaflet-popup-content-wrapper {
       background:#0f2040; border:1px solid var(--border); border-radius:8px;
@@ -130,7 +133,11 @@
       background: rgba(15,32,64,.95) !important;
     }
 
-    .leaflet-control-attribution { background:rgba(7,17,31,.8) !important; color:var(--muted) !important; }
+    .leaflet-control-attribution {
+      background:rgba(7,17,31,.8) !important;
+      color:var(--muted) !important;
+      font-size:9px !important;
+    }
     .leaflet-control-attribution a { color:var(--muted) !important; }
 
     @media(max-width:640px){
@@ -171,128 +178,49 @@
 
 <script>
 const SIGHTS = [
-  { id:0, name:'Врата ада (Дарваза)',       emoji:'🔥', coords:[40.2525,58.4396], desc:'Кратер горящего природного газа в пустыне Каракумы, горит с 1971 года.' },
-  { id:1, name:'Древний Мерв',              emoji:'🏛️', coords:[37.6628,62.1925], desc:'Древний город на Шёлковом пути, объект ЮНЕСКО.' },
-  { id:2, name:'Куня-Ургенч',               emoji:'🕌', coords:[42.3277,59.1544], desc:'Руины древней столицы Хорезма, объект ЮНЕСКО.' },
-  { id:3, name:'Парфянские крепости Ниса',  emoji:'🏯', coords:[37.9667,58.1950], desc:'Столица Парфянского царства, объект ЮНЕСКО.' },
-  { id:4, name:'Каньон Янкыкала',           emoji:'🏜️', coords:[40.6322,54.9267], desc:'Цветные каньоны и скалы, «огненная крепость» Туркменистана.' },
-  { id:5, name:'Мечеть Туркменбаши Рухы',   emoji:'🕌', coords:[38.0178,58.2528], desc:'Одна из самых больших мечетей Центральной Азии (Гыпджак).' }
+  { id:0, name:'Врата ада (Дарваза)',      emoji:'🔥', coords:[40.2525,58.4396], desc:'Кратер горящего природного газа в пустыне Каракумы, горит с 1971 года.' },
+  { id:1, name:'Древний Мерв',             emoji:'🏛️', coords:[37.6628,62.1925], desc:'Древний город на Шёлковом пути, объект ЮНЕСКО.' },
+  { id:2, name:'Куня-Ургенч',              emoji:'🕌', coords:[42.3277,59.1544], desc:'Руины древней столицы Хорезма, объект ЮНЕСКО.' },
+  { id:3, name:'Парфянские крепости Ниса', emoji:'🏯', coords:[37.9667,58.1950], desc:'Столица Парфянского царства, объект ЮНЕСКО.' },
+  { id:4, name:'Каньон Янкыкала',          emoji:'🏜️', coords:[40.6322,54.9267], desc:'Цветные каньоны и скалы, «огненная крепость» Туркменистана.' },
+  { id:5, name:'Мечеть Туркменбаши Рухы',  emoji:'🕌', coords:[38.0178,58.2528], desc:'Одна из самых больших мечетей Центральной Азии (Гыпджак).' }
 ];
 
 let selectedOrder = [];
 
-const TKM_BOUNDS = L.latLngBounds([35.1, 52.4], [42.8, 66.7]);
-
+// ── Карта с тайлами OpenStreetMap ──
 const map = L.map('map', {
   center: [39.2, 59.5],
   zoom: 6,
-  zoomControl: true,
-  maxBounds: TKM_BOUNDS.pad(0.08),
-  maxBoundsViscosity: 1.0,
   minZoom: 5,
   maxZoom: 13,
-  attributionControl: true
+  zoomControl: true
 });
 
-// ════════════════════════════════════════
-// ПРАВИЛЬНЫЙ КОНТУР ТУРКМЕНИСТАНА
-// Формат Leaflet: [lat, lng] — широта, долгота
-// Граница идёт по часовой стрелке
-// ════════════════════════════════════════
-const TKM_POLY = [
-  // Северная граница (с Казахстаном) — запад→восток
-  [41.22, 52.50],[41.47, 52.97],[41.79, 53.40],[41.95, 53.96],[41.87, 54.49],
-  [41.53, 54.72],[41.43, 55.24],[41.54, 55.75],[41.77, 56.18],[42.10, 56.39],
-  [42.34, 56.74],[42.46, 57.18],[42.43, 57.69],[42.30, 58.13],[42.10, 58.52],
-  [41.96, 58.98],[41.92, 59.47],[42.00, 59.97],[42.11, 60.40],[42.33, 60.79],
-  [42.44, 61.12],[42.46, 61.54],[42.34, 61.88],[42.04, 62.11],[41.76, 62.37],
-  [41.54, 62.68],[41.41, 63.06],[41.35, 63.45],[41.35, 63.88],[41.39, 64.30],
-  [41.47, 64.71],[41.54, 65.10],[41.49, 65.47],[41.29, 65.70],
-  // Восточная граница (с Узбекистаном) — север→юг
-  [40.97, 65.87],[40.73, 66.01],[40.50, 65.98],[40.26, 66.02],[39.98, 66.16],
-  [39.74, 66.27],[39.50, 66.12],[39.29, 65.97],[39.08, 65.77],[38.89, 65.51],
-  [38.72, 65.24],[38.57, 64.97],[38.43, 64.72],[38.28, 64.45],[38.13, 64.19],
-  [37.98, 63.93],[37.84, 63.66],[37.67, 63.42],[37.47, 63.18],[37.24, 62.95],
-  // Юго-восточная граница (с Афганистаном) — север→юг
-  [37.10, 62.75],[36.93, 62.53],[36.72, 62.31],[36.54, 62.06],[36.39, 61.75],
-  [36.23, 61.42],[36.10, 61.10],[35.95, 60.77],[35.84, 60.42],[35.71, 60.06],
-  [35.61, 59.68],[35.47, 59.31],[35.30, 58.98],[35.12, 58.67],[34.96, 58.31],
-  [34.84, 57.92],[34.77, 57.51],[34.74, 57.09],[34.78, 56.68],[34.83, 56.27],
-  [34.90, 55.88],[35.00, 55.50],[35.13, 55.14],[35.28, 54.81],[35.47, 54.50],
-  // Южная граница (с Ираном) — восток→запад
-  [35.58, 54.18],[35.72, 53.89],[35.84, 53.55],[35.88, 53.15],[35.82, 52.73],
-  [35.69, 52.36],[35.52, 52.02],[35.38, 51.68],[35.27, 51.30],[35.22, 50.90],
-  [35.25, 50.50],[35.39, 50.16],[35.59, 49.89],[35.83, 49.66],[36.09, 49.46],
-  [36.35, 49.28],[36.61, 49.12],[36.86, 48.93],[37.06, 48.68],[37.20, 48.38],
-  [37.27, 48.05],[37.26, 47.70],[37.19, 47.37],[37.07, 47.07],[36.92, 46.80],
-  [36.77, 46.53],[36.66, 46.24],[36.65, 45.94],[36.74, 45.64],[36.91, 45.39],
-  [37.13, 45.18],[37.37, 44.99],[37.60, 44.82],[37.82, 44.63],[37.99, 44.39],
-  [38.07, 44.10],[38.06, 43.80],[37.97, 43.52],[37.82, 43.27],[37.63, 43.06],
-  // Западная граница (Каспийское море) — юг→север
-  [37.43, 53.97],[37.59, 53.78],[37.73, 53.59],[37.90, 53.41],[38.06, 53.22],
-  [38.22, 53.04],[38.38, 52.87],[38.54, 52.70],[38.70, 52.54],[38.86, 52.39],
-  [39.01, 52.26],[39.17, 52.13],[39.33, 52.01],[39.49, 51.90],[39.65, 51.80],
-  [39.81, 51.71],[39.97, 51.63],[40.13, 51.56],[40.29, 51.50],[40.45, 51.44],
-  [40.62, 51.38],[40.79, 51.34],[40.96, 51.31],[41.13, 51.30],[41.22, 52.50]
-];
-
-function drawTurkmenistan() {
-  // Основная заливка страны
-  L.polygon(TKM_POLY, {
-    fillColor:   '#0e2138',
-    fillOpacity: 1,
-    color:       '#3b82f6',
-    weight:      2,
-    opacity:     0.85,
-    interactive: false,
-    smoothFactor: 1.5
-  }).addTo(map);
-
-  // Лёгкая текстурная подложка
-  L.polygon(TKM_POLY, {
-    fillColor:   '#132840',
-    fillOpacity: 0.3,
-    color:       'transparent',
-    weight:      0,
-    interactive: false,
-    smoothFactor: 1.5
-  }).addTo(map);
-}
-
-drawTurkmenistan();
-
-// Декоративный лейбл пустыни
-L.marker([39.8, 58.5], {
-  icon: L.divIcon({
-    html: `<div style="color:rgba(180,160,100,.35);font-size:13px;font-style:italic;font-family:Georgia,serif;white-space:nowrap;text-shadow:0 1px 4px #000;pointer-events:none;letter-spacing:.12em;">Пустыня Каракумы</div>`,
-    className: '',
-    iconAnchor: [70, 10]
-  }),
-  interactive: false
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  maxZoom: 19,
+  subdomains: ['a','b','c']
 }).addTo(map);
 
-// ════════════════════════════════════════
-// ICON FACTORY
-// ════════════════════════════════════════
+// ── ICON FACTORY ──
 function makeIcon(sight, isActive, orderNum) {
   const size = 36;
-  const bg   = isActive ? '#2563eb' : '#d97706';
-  const bdr  = isActive ? '#1d4ed8' : '#92400e';
+  const bg  = isActive ? '#2563eb' : '#d97706';
+  const bdr = isActive ? '#1d4ed8' : '#92400e';
   const inner = isActive
     ? `<span style="transform:rotate(45deg);font-size:12px;color:#fff;font-weight:bold;font-family:monospace;">${orderNum}</span>`
     : `<span style="transform:rotate(45deg);font-size:17px;line-height:1;">${sight.emoji}</span>`;
   return L.divIcon({
-    html: `<div style="width:${size}px;height:${size}px;background:${bg};border:2px solid ${bdr};border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.6);">${inner}</div>`,
-    className: '',
-    iconSize:   [size,size],
-    iconAnchor: [size/2,size],
+    html:`<div style="width:${size}px;height:${size}px;background:${bg};border:2px solid ${bdr};border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.6);">${inner}</div>`,
+    className:'',
+    iconSize:[size,size],
+    iconAnchor:[size/2,size],
     popupAnchor:[0,-size-4]
   });
 }
 
-// ════════════════════════════════════════
-// POLYLINE
-// ════════════════════════════════════════
+// ── POLYLINE ──
 let routeLine = null;
 function updatePolyline() {
   if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
@@ -302,9 +230,7 @@ function updatePolyline() {
   }).addTo(map);
 }
 
-// ════════════════════════════════════════
-// MARKERS + LABELS
-// ════════════════════════════════════════
+// ── MARKERS + LABELS ──
 const markers = {};
 const labelTooltips = {};
 
@@ -328,9 +254,7 @@ SIGHTS.forEach(sight => {
   labelTooltips[sight.id] = tip;
 });
 
-// ════════════════════════════════════════
-// SIDEBAR
-// ════════════════════════════════════════
+// ── SIDEBAR ──
 const sightListEl = document.getElementById('sight-list');
 SIGHTS.forEach(sight => {
   const li = document.createElement('li');
@@ -340,16 +264,14 @@ SIGHTS.forEach(sight => {
   sightListEl.appendChild(li);
 });
 
-// ════════════════════════════════════════
-// ROUTE LIST
-// ════════════════════════════════════════
+// ── ROUTE LIST ──
 function renderRouteList() {
   const ul = document.getElementById('route-list');
   const empty = document.getElementById('route-empty');
-  Array.from(ul.children).forEach(c => { if (c.id!=='route-empty') ul.removeChild(c); });
-  if (!selectedOrder.length) { empty.style.display=''; return; }
+  Array.from(ul.children).forEach(c => { if (c.id !== 'route-empty') ul.removeChild(c); });
+  if (!selectedOrder.length) { empty.style.display = ''; return; }
   empty.style.display = 'none';
-  selectedOrder.forEach((id,idx) => {
+  selectedOrder.forEach((id, idx) => {
     const s = SIGHTS[id];
     const li = document.createElement('li');
     li.innerHTML = `<span class="route-idx">${idx+1}.</span><span style="font-size:.95rem">${s.emoji}</span><span class="route-name">${s.name}</span><span class="route-remove" title="Убрать">✕</span>`;
@@ -358,9 +280,7 @@ function renderRouteList() {
   });
 }
 
-// ════════════════════════════════════════
-// TOGGLE / REFRESH / RESET
-// ════════════════════════════════════════
+// ── TOGGLE / REFRESH / RESET ──
 function toggleSight(id) {
   const idx = selectedOrder.indexOf(id);
   if (idx === -1) {
@@ -368,7 +288,7 @@ function toggleSight(id) {
     markers[id].openPopup();
     map.panTo(SIGHTS[id].coords, { animate:true, duration:.5 });
   } else {
-    selectedOrder.splice(idx,1);
+    selectedOrder.splice(idx, 1);
     markers[id].closePopup();
   }
   refreshUI();
@@ -386,18 +306,18 @@ function refreshUI() {
       li.classList.add('active');
       const dot = li.querySelector('.sight-dot');
       if (dot) {
-        const num = Object.assign(document.createElement('span'),{className:'sight-num',id:`dot-${sight.id}`,textContent:oi+1});
-        li.replaceChild(num,dot);
+        const num = Object.assign(document.createElement('span'), { className:'sight-num', id:`dot-${sight.id}`, textContent:oi+1 });
+        li.replaceChild(num, dot);
       } else {
         const n = document.getElementById(`dot-${sight.id}`);
-        if(n) n.textContent = oi+1;
+        if (n) n.textContent = oi+1;
       }
     } else {
       li.classList.remove('active');
       const num = document.getElementById(`dot-${sight.id}`);
       if (num?.classList.contains('sight-num')) {
-        const dot = Object.assign(document.createElement('span'),{className:'sight-dot',id:`dot-${sight.id}`});
-        li.replaceChild(dot,num);
+        const dot = Object.assign(document.createElement('span'), { className:'sight-dot', id:`dot-${sight.id}` });
+        li.replaceChild(dot, num);
       }
     }
   });
@@ -405,7 +325,7 @@ function refreshUI() {
   renderRouteList();
 }
 
-function resetAll() { selectedOrder=[]; map.closePopup(); refreshUI(); }
+function resetAll() { selectedOrder = []; map.closePopup(); refreshUI(); }
 
 refreshUI();
 </script>
